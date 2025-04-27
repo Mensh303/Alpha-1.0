@@ -9,8 +9,8 @@
 
     body {
       margin: 0;
-      background: radial-gradient(circle, #0d0d0d, #111);
-      color: #e0e0e0;
+      background-color: #121212;
+      color: #d1d1d1;
       font-family: 'Share Tech Mono', monospace;
       display: flex;
       justify-content: center;
@@ -18,7 +18,10 @@
       height: 100vh;
       overflow: hidden;
       position: relative;
-      filter: blur(0.5px);
+      background-image: url('https://images.unsplash.com/photo-1533742459028-858b68200ee5'); /* Sci-fi lab feel */
+      background-size: cover;
+      background-position: center;
+      filter: blur(2px);
     }
 
     .overlay {
@@ -27,37 +30,32 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(45deg, #ff0000, #000000);
-      opacity: 0.6;
+      background: rgba(0, 0, 0, 0.6);
       z-index: 1;
-      mix-blend-mode: multiply;
-      pointer-events: none;
-      animation: flicker 2s infinite;
-    }
-
-    @keyframes flicker {
-      0% { opacity: 0.6; transform: rotate(0deg); }
-      20% { opacity: 0.3; transform: rotate(1deg); }
-      40% { opacity: 0.5; transform: rotate(-2deg); }
-      60% { opacity: 0.4; transform: rotate(3deg); }
-      80% { opacity: 0.6; transform: rotate(-1deg); }
-      100% { opacity: 0.3; transform: rotate(2deg); }
     }
 
     .terminal {
       position: relative;
-      background-color: rgba(0, 0, 0, 0.9);
-      border-radius: 10px;
-      padding: 40px;
-      color: #00ff00;
-      font-size: 1.4em;
-      text-shadow: 0 0 15px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
-      max-width: 800px;
-      width: 90%;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+      background-color: rgba(0, 0, 0, 0.8);
+      border: 2px solid #ff4d4d;
+      padding: 30px;
+      font-size: 1.3em;
+      color: #ff4d4d;
+      max-width: 600px;
+      width: 80%;
+      box-shadow: 0 0 15px rgba(255, 77, 77, 0.3);
       z-index: 2;
+      text-align: left;
       overflow-y: auto;
       max-height: 70vh;
+      border-radius: 10px;
+      animation: flickerEffect 1.5s infinite;
+    }
+
+    @keyframes flickerEffect {
+      0% { opacity: 0.9; transform: translateY(1px); }
+      50% { opacity: 0.6; transform: translateY(-1px); }
+      100% { opacity: 0.9; transform: translateY(1px); }
     }
 
     .terminal p {
@@ -67,20 +65,21 @@
 
     .alert {
       position: absolute;
-      top: 5%;
-      left: 5%;
-      font-size: 1.2em;
-      color: #ff0000;
-      letter-spacing: 1px;
+      top: 10%;
+      right: 5%;
+      color: #ff4d4d;
+      font-size: 1.5em;
+      letter-spacing: 2px;
       text-transform: uppercase;
-      animation: flickerAlert 1.5s infinite;
+      animation: flickerAlert 1s infinite;
       z-index: 3;
+      text-shadow: 0 0 10px #ff4d4d;
     }
 
     @keyframes flickerAlert {
-      0% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(1.1); }
-      100% { opacity: 1; transform: scale(1); }
+      0% { opacity: 1; }
+      50% { opacity: 0.4; }
+      100% { opacity: 1; }
     }
 
     .static {
@@ -95,23 +94,45 @@
       z-index: 0;
       pointer-events: none;
     }
+
+    .rusted-border {
+      border: 2px solid #3e3e3e;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #000, inset 0 0 5px #ff4d4d;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: -1;
+      animation: rustEffect 3s infinite alternate;
+    }
+
+    @keyframes rustEffect {
+      0% { border-color: #ff4d4d; box-shadow: 0 0 15px rgba(255, 77, 77, 0.5); }
+      100% { border-color: #3e3e3e; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); }
+    }
+
   </style>
 </head>
 <body>
   <div class="overlay"></div>
+  <div class="rusted-border"></div>
   <div class="static"></div>
-  <div class="alert">SYSTEM MALFUNCTION</div>
+  
+  <div class="alert">SYSTEM BREACH</div>
+
   <div class="terminal">
-    <p>ERROR: Connection Lost...</p>
-    <p>Attempting to Reconnect...</p>
-    <p>Location: <span style="color: #ff0000;">/dev/null</span></p>
-    <p>Warning: Unauthorized Access Detected.</p>
-    <p>UNKNOWN SOURCE: "0x1A2B3C"</p>
-    <p>Initiating Auto Shutdown...</p>
-    <p>Shut down failed. System compromise.</p>
-    <p>Security breach detected. <span style="color: #ff0000;">ALERT LEVEL: CRITICAL</span></p>
-    <p>/// System will self-destruct in: 10...</p>
-    <p>/// Session Terminated ///</p>
+    <p>ERROR: Corrupted Data...</p>
+    <p>WARNING: Unauthorized Access Detected...</p>
+    <p>Tracing Source...</p>
+    <p>LOCATION: <span style="color: #ff4d4d;">/unknown/level12</span></p>
+    <p>Connection Lost. Re-attempting...</p>
+    <p>WARNING: System instability detected...</p>
+    <p>ALERT: Data breach confirmed.</p>
+    <p>Security Log: <span style="color: #ff4d4d;">UNKNOWN ENTITY: "PROJECT X"</span></p>
+    <p>Shutdown initiated. <span style="color: #ff4d4d;">SYSTEM FAILING...</span></p>
+    <p>/// SYSTEM DAMAGE REPORT ///</p>
   </div>
 </body>
 </html>
