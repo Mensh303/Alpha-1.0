@@ -1,92 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ACCESS DENIED</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fringe Terminal</title>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(30, 0, 50, 0.3) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(50, 0, 30, 0.3) 0%, transparent 20%),
+                linear-gradient(to bottom, #0a0a0a, #000000);
+            height: 100vh;
+            overflow: hidden;
+        }
 
-    body {
-      margin: 0;
-      background-color: #010101;
-      color: #e0e0e0;
-      font-family: 'Share Tech Mono', monospace;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-      position: relative;
-    }
+        .terminal-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            width: 80%;
+            max-width: 800px;
+            height: 70vh;
+            margin: 5vh auto;
+            box-shadow: 0 0 20px rgba(100, 0, 150, 0.5),
+                        inset 0 0 10px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
 
-    .terminal {
-      background: rgba(255, 255, 255, 0.03);
-      padding: 30px;
-      border: 1px solid #e0e0e0;
-      width: 80%;
-      max-width: 600px;
-      box-shadow: 0 0 10px rgba(255,255,255,0.1);
-      text-align: left;
-      font-size: 1.2em;
-      overflow-y: auto;
-      max-height: 80vh;
-    }
+        .terminal-header {
+            background: linear-gradient(to right, #2a0a3a, #1a0a2a);
+            color: #c0c0c0;
+            padding: 8px 15px;
+            font-size: 14px;
+            border-bottom: 1px solid #500050;
+            display: flex;
+            justify-content: space-between;
+        }
 
-    .terminal p {
-      margin: 10px 0;
-      white-space: pre;
-    }
+        .terminal-buttons {
+            display: flex;
+            gap: 8px;
+        }
 
-    .alert {
-      position: absolute;
-      top: 5%;
-      right: 5%;
-      background: #111;
-      color: white;
-      padding: 10px 20px;
-      border: 1px solid white;
-      font-size: 0.9em;
-      animation: pulse 1.5s infinite;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
+        .terminal-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
 
-    @keyframes pulse {
-      0% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.6; transform: scale(1.05); }
-      100% { opacity: 1; transform: scale(1); }
-    }
+        .terminal-button.red {
+            background-color: #ff5f56;
+        }
 
-    .static {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif') repeat;
-      mix-blend-mode: screen;
-      opacity: 0.05;
-      pointer-events: none;
-      z-index: 0;
-    }
-  </style>
+        .terminal-button.yellow {
+            background-color: #ffbd2e;
+        }
+
+        .terminal-button.green {
+            background-color: #27c93f;
+        }
+
+        .terminal-body {
+            padding: 15px;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            background-color: rgba(10, 10, 10, 0.7);
+            position: relative;
+        }
+
+        .terminal-body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 10px 10px;
+            pointer-events: none;
+        }
+
+        .prompt {
+            color: #a0f0a0;
+        }
+
+        .command {
+            color: #ffffff;
+        }
+
+        .output {
+            color: #c0c0c0;
+            margin: 5px 0 15px 20px;
+            line-height: 1.4;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background-color: #a0f0a0;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .glitch {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 15 -7"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.05"/></svg>');
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .fringe-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(0deg, transparent 0%, rgba(80, 0, 80, 0.1) 100%);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .hidden-message {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.1);
+            font-size: 10px;
+            transition: color 0.5s;
+        }
+
+        .hidden-message:hover {
+            color: rgba(255, 0, 255, 0.5);
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(150, 0, 150, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(200, 0, 200, 0.7);
+        }
+    </style>
 </head>
 <body>
-  <div class="static"></div>
-  
-  <div class="alert">SECURITY BREACH</div>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div>fringe-terminal — bash — 80x24</div>
+            <div class="terminal-buttons">
+                <div class="terminal-button red"></div>
+                <div class="terminal-button yellow"></div>
+                <div class="terminal-button green"></div>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div class="prompt">user@fringe:~$ <span class="command">init_system</span></div>
+            <div class="output">
+                > Initializing fringe connection...<br>
+                > Establishing quantum link...<br>
+                > WARNING: Unusual energy signatures detected<br>
+                > Connection established with alternate dimension<br>
+                > SYSTEM READY<br>
+            </div>
 
-  <div class="terminal">
-    <p>Initializing...</p>
-    <p>Connecting to node 13.76.221.45 ...</p>
-    <p>Access Level: <span style="color:red;">Restricted</span></p>
-    <p>Intrusion Detected.</p>
-    <p>Tracing Source...</p>
-    <p>UNKNOWN ENTITY: "HIM"</p>
-    <p>SYSTEM WARNING: Watching activity logs...</p>
-    <p>/// Session Terminated ///</p>
-  </div>
-</body>
-</html>
+            <div class="prompt">user@fringe:~$ <span class="command">access_observatory --dimension=red</span></div>
+            <div class="output">
+                > Accessing Red Dimension Observatory...<br>
+                > Security clearance required<br>
+                > Biometric scan in progress...<br>
+                > WARNING: Unknown entity detected in perimeter<br>
+                > <span style="color:#ff5555">CRITICAL: Containment breach detected</span><br>
+                > Emergency protocols engaged<br>
+            </div>
+
+            <div class="prompt">user@fringe:~$ <span class="command">status --all</span></div>
+            <div class="output">
+                > SYSTEM STATUS REPORT<br>
+                > Quantum link: <span style="color:#a0f0a0">stable</span><br>
+                > Dimensional stability: <span style="color:#ffff80">fluctuating</span><br>
+                > Anomalies detected: <span style="color:#ff5555">12</span><br>
+                > Temporal displacement: 0.0034ms<br>
+                > Observers active: <span style="color:#ff5555">3</span>/2<br>
+                > <span style="color:#ff5555">WARNING: Unauthorized observer detected</span><br>
+            </div>
+
+            <div class="prompt">user@fringe:~$ <span class="command">scan --entity=unknown</span></div>
+            <div class="output">
+                > Initiating deep scan...<br>
+                > Biological signature: <span style="color:#ff5555">UNKNOWN</span><br>
+                > Energy readings: <span style="color:#ffff80">off the charts</span><br>
+                > Dimensional phase: <span style="color:#ff5555">incoherent</span><br>
+                > Threat level: <span style="color:#ff5555">EXTREME</span><br>
+                > Recommendation: <span style="color:#ff5555">IMMEDIATE CONTAINMENT</span><br>
+            </div>
+
+            <div class="prompt">user@fringe:~$ <span class="cursor"></span></div>
+        </div>
+        <div class="glitch"></div>
+        <div class="fringe-effect"></div>
+        <div class="hidden-message">they are watching</div>
+    </div>
+
+    <script>
+        // Simulate typing effect
+        document.addEventListener('DOMContentLoaded', function() {
+            const commands = [
+                "contain --entity=unknown --protocol=omega",
+                "activate_shield --frequency=4.7GHz",
+                "contact --agent=olivia --priority=urgent",
+                "query --database=anomalies --filter='recent'",
+                "help --command=emergency"
+            ];
+            
+            const cursor = document.querySelector('.cursor');
+            const prompt = document.querySelector('.prompt:last-child');
+            let currentCommand = '';
+            let charIndex = 0;
+            let commandIndex = 0;
+            
+            function typeNextCharacter() {
+                if (charIndex < commands[commandIndex].length) {
+                    currentCommand += commands[commandIndex].charAt(charIndex);
+                    prompt.innerHTML = `user@fringe:~$ ${currentCommand}<span class="cursor"></span>`;
+                    charIndex++;
+                    setTimeout(typeNextCharacter, Math.random() * 100 + 50);
+                } else {
+                    setTimeout(deleteCommand, 2000);
+                }
+            }
+            
+            function deleteCommand() {
+                if (currentCommand.length > 0) {
+                    currentCommand = currentCommand.substring(0, currentCommand.length - 1);
+                    prompt.innerHTML = `user@fringe:~$ ${currentCommand}<span class="cursor"></span>`;
+                    setTimeout(deleteCommand, 30);
+                } else {
+                    commandIndex = (commandIndex + 1) % commands.length;
+                    charIndex = 0;
+                    setTimeout(typeNextCharacter, 500);
+                }
+            }
+            
+            setTimeout(typeNextCharacter, 1500);
+            
+            // Add occasional gl
