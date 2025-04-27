@@ -9,31 +9,55 @@
 
     body {
       margin: 0;
-      background-color: #000000;
+      background: radial-gradient(circle, #0d0d0d, #111);
       color: #e0e0e0;
       font-family: 'Share Tech Mono', monospace;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
       overflow: hidden;
       position: relative;
+      filter: blur(0.5px);
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, #ff0000, #000000);
+      opacity: 0.6;
+      z-index: 1;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      animation: flicker 2s infinite;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0.6; transform: rotate(0deg); }
+      20% { opacity: 0.3; transform: rotate(1deg); }
+      40% { opacity: 0.5; transform: rotate(-2deg); }
+      60% { opacity: 0.4; transform: rotate(3deg); }
+      80% { opacity: 0.6; transform: rotate(-1deg); }
+      100% { opacity: 0.3; transform: rotate(2deg); }
     }
 
     .terminal {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 30px;
-      border: 1px solid #ff0000;
-      width: 80%;
-      max-width: 600px;
-      box-shadow: 0 0 20px rgba(255,0,0,0.5);
-      text-align: left;
+      position: relative;
+      background-color: rgba(0, 0, 0, 0.9);
+      border-radius: 10px;
+      padding: 40px;
+      color: #00ff00;
       font-size: 1.4em;
+      text-shadow: 0 0 15px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
+      max-width: 800px;
+      width: 90%;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+      z-index: 2;
       overflow-y: auto;
-      max-height: 80vh;
-      color: #00ff00; /* White terminal text with a green glow */
-      text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00; /* Glowing green effect */
+      max-height: 70vh;
     }
 
     .terminal p {
@@ -44,21 +68,18 @@
     .alert {
       position: absolute;
       top: 5%;
-      right: 5%;
-      background: #111;
-      color: white;
-      padding: 10px 20px;
-      border: 1px solid #ff0000;
-      font-size: 0.9em;
-      animation: pulse 1.5s infinite;
+      left: 5%;
+      font-size: 1.2em;
+      color: #ff0000;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      letter-spacing: 2px;
-      box-shadow: 0 0 10px #ff0000;
+      animation: flickerAlert 1.5s infinite;
+      z-index: 3;
     }
 
-    @keyframes pulse {
+    @keyframes flickerAlert {
       0% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(1.1); }
+      50% { opacity: 0.4; transform: scale(1.1); }
       100% { opacity: 1; transform: scale(1); }
     }
 
@@ -69,45 +90,27 @@
       width: 100%;
       height: 100%;
       background: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif') repeat;
-      mix-blend-mode: overlay;
+      mix-blend-mode: screen;
       opacity: 0.1;
-      pointer-events: none;
       z-index: 0;
-    }
-
-    .fringe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      mix-blend-mode: multiply;
-      z-index: 1;
-      animation: fringeAnimation 0.2s infinite;
-    }
-
-    @keyframes fringeAnimation {
-      0% { opacity: 0.2; transform: scale(1.05); }
-      50% { opacity: 0.7; transform: scale(1.1); }
-      100% { opacity: 0.2; transform: scale(1.05); }
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
+  <div class="overlay"></div>
   <div class="static"></div>
-  <div class="fringe"></div>
-  
-  <div class="alert">SECURITY BREACH</div>
-
+  <div class="alert">SYSTEM MALFUNCTION</div>
   <div class="terminal">
-    <p>Initializing...</p>
-    <p>Connecting to node 13.76.221.45 ...</p>
-    <p>Access Level: <span style="color:red;">Restricted</span></p>
-    <p>Intrusion Detected.</p>
-    <p>Tracing Source...</p>
-    <p>UNKNOWN ENTITY: "HIM"</p>
-    <p>SYSTEM WARNING: Watching activity logs...</p>
+    <p>ERROR: Connection Lost...</p>
+    <p>Attempting to Reconnect...</p>
+    <p>Location: <span style="color: #ff0000;">/dev/null</span></p>
+    <p>Warning: Unauthorized Access Detected.</p>
+    <p>UNKNOWN SOURCE: "0x1A2B3C"</p>
+    <p>Initiating Auto Shutdown...</p>
+    <p>Shut down failed. System compromise.</p>
+    <p>Security breach detected. <span style="color: #ff0000;">ALERT LEVEL: CRITICAL</span></p>
+    <p>/// System will self-destruct in: 10...</p>
     <p>/// Session Terminated ///</p>
   </div>
 </body>
