@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>HIM Terminal</title>
+  <title>ACCESS DENIED</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
     body {
       margin: 0;
-      background-color: black;
-      color: #ffffff;
+      background-color: #010101;
+      color: #e0e0e0;
       font-family: 'Share Tech Mono', monospace;
       display: flex;
       flex-direction: column;
@@ -18,61 +18,53 @@
       align-items: center;
       height: 100vh;
       overflow: hidden;
-      text-align: center;
       position: relative;
     }
 
-    .glitch {
-      font-size: 2.3em;
-      position: relative;
-      color: white;
-      animation: flicker 1.5s infinite;
-      display: inline-block;
-    }
-
-    .glitch::before,
-    .glitch::after {
-      content: attr(data-text);
-      position: absolute;
-      left: 0;
-      width: 100%;
-      overflow: hidden;
-    }
-
-    .glitch::before {
-      color: #ffffff;
-      animation: glitchTop 2s infinite linear;
-    }
-
-    .glitch::after {
-      color: #ffffff;
-      animation: glitchBottom 1.5s infinite linear;
-    }
-
-    @keyframes glitchTop {
-      0% { clip: rect(0, 9999px, 0, 0); }
-      10% { clip: rect(10px, 9999px, 60px, 0); transform: translate(-3px, -3px); }
-      20% { clip: rect(5px, 9999px, 50px, 0); transform: translate(3px, -2px); }
-      30%, 100% { clip: rect(0, 9999px, 0, 0); transform: none; }
-    }
-
-    @keyframes glitchBottom {
-      0% { clip: rect(0, 9999px, 0, 0); }
-      10% { clip: rect(70px, 9999px, 100px, 0); transform: translate(3px, 2px); }
-      20% { clip: rect(60px, 9999px, 90px, 0); transform: translate(-2px, 1px); }
-      30%, 100% { clip: rect(0, 9999px, 0, 0); transform: none; }
-    }
-
-    @keyframes flicker {
-      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
-      20%, 22%, 24%, 55% { opacity: 0.3; }
-    }
-
-    .subtext {
-      margin-top: 20px;
+    .terminal {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 30px;
+      border: 1px solid #e0e0e0;
+      width: 80%;
+      max-width: 600px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+      text-align: left;
       font-size: 1.1em;
-      color: #ffffff;
-      animation: flicker 3s infinite;
+    }
+
+    .terminal p {
+      margin: 0;
+      margin-bottom: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: typing 3s steps(30, end), blink-caret .75s step-end infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
+    @keyframes blink-caret {
+      50% { border-color: transparent }
+    }
+
+    .alert {
+      position: absolute;
+      top: 5%;
+      right: 5%;
+      background: #111;
+      color: white;
+      padding: 10px 20px;
+      border: 1px solid white;
+      font-size: 0.9em;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.05); }
+      100% { opacity: 1; transform: scale(1); }
     }
 
     .static {
@@ -83,38 +75,22 @@
       height: 100%;
       background: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif') repeat;
       mix-blend-mode: screen;
-      opacity: 0.07;
+      opacity: 0.05;
       pointer-events: none;
-    }
-
-    .terminal-box {
-      background-color: rgba(255, 255, 255, 0.05);
-      padding: 20px;
-      margin-top: 40px;
-      border: 1px solid #ffffff;
-      width: 80%;
-      max-width: 600px;
-      text-align: left;
-      font-size: 1em;
-      overflow-y: auto;
-      max-height: 300px;
-    }
-
-    .command {
-      color: #ffffff;
-    }
-
-    .cursor {
-      display: inline-block;
-      width: 10px;
-      background-color: #ffffff;
-      animation: blink 1s infinite;
-    }
-
-    @keyframes blink {
-      0%, 50% { opacity: 1; }
-      50.01%, 100% { opacity: 0; }
     }
   </style>
 </head>
 <body>
+  <div class="static"></div>
+  
+  <div class="alert">SECURITY BREACH</div>
+
+  <div class="terminal">
+    <p>Connecting to node 13.76.221.45 ...</p>
+    <p>Access Level: Restricted</p>
+    <p>Override attempt detected...</p>
+    <p>RUNNING COUNTERMEASURES...</p>
+    <p>!!! HIM IS WATCHING !!!</p>
+  </div>
+</body>
+</html>
