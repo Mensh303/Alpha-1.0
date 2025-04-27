@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ACCESS DENIED</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
@@ -29,24 +29,14 @@
       max-width: 600px;
       box-shadow: 0 0 10px rgba(255,255,255,0.1);
       text-align: left;
-      font-size: 1.1em;
+      font-size: 1.2em;
+      overflow-y: auto;
+      max-height: 80vh;
     }
 
     .terminal p {
-      margin: 0;
-      margin-bottom: 10px;
-      white-space: nowrap;
-      overflow: hidden;
-      animation: typing 3s steps(30, end), blink-caret .75s step-end infinite;
-    }
-
-    @keyframes typing {
-      from { width: 0 }
-      to { width: 100% }
-    }
-
-    @keyframes blink-caret {
-      50% { border-color: transparent }
+      margin: 10px 0;
+      white-space: pre;
     }
 
     .alert {
@@ -58,12 +48,14 @@
       padding: 10px 20px;
       border: 1px solid white;
       font-size: 0.9em;
-      animation: pulse 2s infinite;
+      animation: pulse 1.5s infinite;
+      text-transform: uppercase;
+      letter-spacing: 2px;
     }
 
     @keyframes pulse {
       0% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(1.05); }
+      50% { opacity: 0.6; transform: scale(1.05); }
       100% { opacity: 1; transform: scale(1); }
     }
 
@@ -77,6 +69,7 @@
       mix-blend-mode: screen;
       opacity: 0.05;
       pointer-events: none;
+      z-index: 0;
     }
   </style>
 </head>
@@ -86,11 +79,14 @@
   <div class="alert">SECURITY BREACH</div>
 
   <div class="terminal">
+    <p>Initializing...</p>
     <p>Connecting to node 13.76.221.45 ...</p>
-    <p>Access Level: Restricted</p>
-    <p>Override attempt detected...</p>
-    <p>RUNNING COUNTERMEASURES...</p>
-    <p>!!! HIM IS WATCHING !!!</p>
+    <p>Access Level: <span style="color:red;">Restricted</span></p>
+    <p>Intrusion Detected.</p>
+    <p>Tracing Source...</p>
+    <p>UNKNOWN ENTITY: "HIM"</p>
+    <p>SYSTEM WARNING: Watching activity logs...</p>
+    <p>/// Session Terminated ///</p>
   </div>
 </body>
 </html>
