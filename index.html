@@ -1,364 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Terminal</title>
-    <style>
-        :root {
-            --neon-pink: #ff2a6d;
-            --neon-blue: #05d9e8;
-            --neon-purple: #d300c5;
-            --dark-bg: #0d0221;
-            --darker-bg: #050110;
-            --terminal-bg: rgba(5, 1, 16, 0.85);
-        }
-        
-        body {
-            background-color: var(--dark-bg);
-            color: #c7c7c7;
-            font-family: 'Source Code Pro', monospace;
-            margin: 0;
-            padding: 0;
-            background-image: 
-                linear-gradient(to bottom, var(--darker-bg), var(--dark-bg)),
-                radial-gradient(circle at 70% 30%, var(--neon-purple) 0%, transparent 25%),
-                radial-gradient(circle at 30% 70%, var(--neon-blue) 0%, transparent 25%);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACCESS DENIED</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-        .terminal-container {
-            background-color: var(--terminal-bg);
-            border: 1px solid var(--neon-blue);
-            border-radius: 0;
-            width: 85%;
-            max-width: 900px;
-            height: 75vh;
-            box-shadow: 
-                0 0 15px var(--neon-blue),
-                0 0 30px var(--neon-purple),
-                inset 0 0 10px rgba(5, 217, 232, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
+    body {
+      margin: 0;
+      background-color: #000000;
+      color: #e0e0e0;
+      font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
 
-        .terminal-header {
-            background: linear-gradient(to right, #110038, #1a0044);
-            color: var(--neon-blue);
-            padding: 8px 15px;
-            font-size: 14px;
-            border-bottom: 1px solid var(--neon-pink);
-            display: flex;
-            justify-content: space-between;
-            text-shadow: 0 0 5px var(--neon-blue);
-        }
+    .terminal {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border: 1px solid #ff0000;
+      width: 80%;
+      max-width: 600px;
+      box-shadow: 0 0 20px rgba(255,0,0,0.5);
+      text-align: left;
+      font-size: 1.4em;
+      overflow-y: auto;
+      max-height: 80vh;
+      color: #00ff00; /* White terminal text with a green glow */
+      text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00; /* Glowing green effect */
+    }
 
-        .terminal-buttons {
-            display: flex;
-            gap: 8px;
-        }
+    .terminal p {
+      margin: 10px 0;
+      white-space: pre;
+    }
 
-        .terminal-button {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            box-shadow: 0 0 3px currentColor;
-        }
+    .alert {
+      position: absolute;
+      top: 5%;
+      right: 5%;
+      background: #111;
+      color: white;
+      padding: 10px 20px;
+      border: 1px solid #ff0000;
+      font-size: 0.9em;
+      animation: pulse 1.5s infinite;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      box-shadow: 0 0 10px #ff0000;
+    }
 
-        .terminal-button.red {
-            background-color: #ff5f56;
-            color: #ff5f56;
-        }
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.1); }
+      100% { opacity: 1; transform: scale(1); }
+    }
 
-        .terminal-button.yellow {
-            background-color: #ffbd2e;
-            color: #ffbd2e;
-        }
+    .static {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif') repeat;
+      mix-blend-mode: overlay;
+      opacity: 0.1;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-        .terminal-button.green {
-            background-color: #27c93f;
-            color: #27c93f;
-        }
+    .fringe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      mix-blend-mode: multiply;
+      z-index: 1;
+      animation: fringeAnimation 0.2s infinite;
+    }
 
-        .terminal-body {
-            padding: 20px;
-            height: calc(100% - 40px);
-            overflow-y: auto;
-            position: relative;
-            background-image: 
-                linear-gradient(rgba(255, 42, 109, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 42, 109, 0.03) 1px, transparent 1px);
-            background-size: 20px 20px;
-        }
-
-        .prompt {
-            color: var(--neon-pink);
-            text-shadow: 0 0 3px var(--neon-pink);
-        }
-
-        .command {
-            color: white;
-        }
-
-        .output {
-            color: #a0a0a0;
-            margin: 8px 0 20px 20px;
-            line-height: 1.5;
-        }
-
-        .neon-highlight {
-            color: var(--neon-blue);
-            text-shadow: 0 0 3px var(--neon-blue);
-        }
-
-        .warning {
-            color: var(--neon-pink);
-            text-shadow: 0 0 3px var(--neon-pink);
-        }
-
-        .cursor {
-            display: inline-block;
-            width: 8px;
-            height: 15px;
-            background-color: var(--neon-blue);
-            animation: blink 1s infinite, glow 1.5s infinite alternate;
-            vertical-align: middle;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        @keyframes glow {
-            from { box-shadow: 0 0 3px var(--neon-blue); }
-            to { box-shadow: 0 0 10px var(--neon-blue); }
-        }
-
-        .scanlines {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                linear-gradient(
-                    to bottom,
-                    rgba(255, 255, 255, 0) 0%,
-                    rgba(255, 255, 255, 0) 50%,
-                    rgba(255, 255, 255, 0.03) 51%,
-                    rgba(255, 255, 255, 0.05) 100%
-                );
-            background-size: 100% 4px;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        .corner-decoration {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            border-color: var(--neon-blue);
-            border-style: solid;
-            border-width: 0;
-            opacity: 0.7;
-        }
-
-        .corner-tl {
-            top: -1px;
-            left: -1px;
-            border-top-width: 3px;
-            border-left-width: 3px;
-        }
-
-        .corner-tr {
-            top: -1px;
-            right: -1px;
-            border-top-width: 3px;
-            border-right-width: 3px;
-        }
-
-        .corner-bl {
-            bottom: -1px;
-            left: -1px;
-            border-bottom-width: 3px;
-            border-left-width: 3px;
-        }
-
-        .corner-br {
-            bottom: -1px;
-            right: -1px;
-            border-bottom-width: 3px;
-            border-right-width: 3px;
-        }
-
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.3);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--neon-purple);
-            border-radius: 4px;
-            box-shadow: 0 0 5px var(--neon-purple);
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--neon-pink);
-        }
-
-        .hidden-link {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-            color: rgba(255, 255, 255, 0.1);
-            font-size: 10px;
-            transition: all 0.3s;
-        }
-
-        .hidden-link:hover {
-            color: var(--neon-blue);
-            text-shadow: 0 0 5px var(--neon-blue);
-        }
-    </style>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    @keyframes fringeAnimation {
+      0% { opacity: 0.2; transform: scale(1.05); }
+      50% { opacity: 0.7; transform: scale(1.1); }
+      100% { opacity: 0.2; transform: scale(1.05); }
+    }
+  </style>
 </head>
 <body>
-    <div class="terminal-container">
-        <div class="corner-decoration corner-tl"></div>
-        <div class="corner-decoration corner-tr"></div>
-        <div class="corner-decoration corner-bl"></div>
-        <div class="corner-decoration corner-br"></div>
-        
-        <div class="terminal-header">
-            <div>neo-terminal — zsh — 90x32</div>
-            <div class="terminal-buttons">
-                <div class="terminal-button red"></div>
-                <div class="terminal-button yellow"></div>
-                <div class="terminal-button green"></div>
-            </div>
-        </div>
-        <div class="terminal-body">
-            <div class="prompt">user@neon:~$ <span class="command">system_status --full</span></div>
-            <div class="output">
-                > <span class="neon-highlight">NEOTOKYO</span> SYSTEM STATUS REPORT<br>
-                > Cyberware sync: <span class="neon-highlight">97%</span><br>
-                > Neural uplink: <span class="neon-highlight">stable</span><br>
-                > Threat detection: <span class="warning">3 active</span><br>
-                > Encryption level: <span class="neon-highlight">quantum</span><br>
-                > Local time: 03:47:21 <span class="neon-highlight">[NIGHT CYCLE]</span><br>
-            </div>
+  <div class="static"></div>
+  <div class="fringe"></div>
+  
+  <div class="alert">SECURITY BREACH</div>
 
-            <div class="prompt">user@neon:~$ <span class="command">scan_environment --radius=500m</span></div>
-            <div class="output">
-                > INITIATING <span class="neon-highlight">CYBERSCAN</span>...<br>
-                > <span class="warning">WARNING:</span> Multiple IFF signatures detected<br>
-                > <span class="neon-highlight">3</span> corporate drones<br>
-                > <span class="neon-highlight">1</span> unknown cybernetic signature<br>
-                > <span class="warning">ALERT:</span> Black ICE detected in subnet<br>
-                > Recommendation: <span class="warning">activate countermeasures</span><br>
-            </div>
-
-            <div class="prompt">user@neon:~$ <span class="command">access --node=central_archive --credentials=high</span></div>
-            <div class="output">
-                > CONNECTING TO <span class="neon-highlight">CENTRAL ARCHIVE</span>...<br>
-                > Biometric verification required<br>
-                > Retinal scan <span class="neon-highlight">confirmed</span><br>
-                > Neural pattern <span class="neon-highlight">verified</span><br>
-                > <span class="warning">WARNING:</span> Unauthorized access attempt logged<br>
-                > <span class="neon-highlight">ACCESS GRANTED</span> (security level 9)<br>
-            </div>
-
-            <div class="prompt">user@neon:~$ <span class="command">decrypt --file=data_core.enc --algorithm=quantum</span></div>
-            <div class="output">
-                > INITIATING <span class="neon-highlight">QUANTUM DECRYPTION</span> SEQUENCE...<br>
-                > <span class="neon-highlight">47%</span> complete - estimating 23.4 seconds remaining<br>
-                > <span class="warning">ALERT:</span> Counter-intrusion detected<br>
-                > <span class="neon-highlight">Activating</span> defensive protocols<br>
-                > Firewall integrity: <span class="neon-highlight">89%</span><br>
-            </div>
-
-            <div class="prompt">user@neon:~$ <span class="cursor"></span></div>
-        </div>
-        <div class="scanlines"></div>
-        <div class="hidden-link">// SYSTEM_ACCESS=ROOT</div>
-    </div>
-
-    <script>
-        // Simulate typing effect with cyberpunk commands
-        document.addEventListener('DOMContentLoaded', function() {
-            const commands = [
-                "activate_stealth --duration=300s",
-                "deploy_ice --type=adaptive --level=7",
-                "query_database --table=black_ops --filter='recent'",
-                "hack_target --ip=192.42.256.78 --port=quantum",
-                "scan_for_wetware --precision=high"
-            ];
-            
-            const cursor = document.querySelector('.cursor');
-            const prompt = document.querySelector('.prompt:last-child');
-            let currentCommand = '';
-            let charIndex = 0;
-            let commandIndex = 0;
-            
-            function typeNextCharacter() {
-                if (charIndex < commands[commandIndex].length) {
-                    currentCommand += commands[commandIndex].charAt(charIndex);
-                    prompt.innerHTML = `user@neon:~$ ${currentCommand}<span class="cursor"></span>`;
-                    charIndex++;
-                    setTimeout(typeNextCharacter, Math.random() * 60 + 30);
-                } else {
-                    setTimeout(deleteCommand, 1500);
-                }
-            }
-            
-            function deleteCommand() {
-                if (currentCommand.length > 0) {
-                    currentCommand = currentCommand.substring(0, currentCommand.length - 1);
-                    prompt.innerHTML = `user@neon:~$ ${currentCommand}<span class="cursor"></span>`;
-                    setTimeout(deleteCommand, 20);
-                } else {
-                    commandIndex = (commandIndex + 1) % commands.length;
-                    charIndex = 0;
-                    setTimeout(typeNextCharacter, 800);
-                }
-            }
-            
-            setTimeout(typeNextCharacter, 1000);
-            
-            // Add occasional cyberpunk glitch effect
-            setInterval(() => {
-                if (Math.random() > 0.85) {
-                    const body = document.querySelector('.terminal-body');
-                    body.style.textShadow = `0 0 8px ${Math.random() > 0.5 ? 'var(--neon-pink)' : 'var(--neon-blue)'}`;
-                    setTimeout(() => {
-                        body.style.textShadow = 'none';
-                    }, 100);
-                }
-            }, 3000);
-            
-            // Make hidden link clickable
-            document.querySelector('.hidden-link').addEventListener('click', function() {
-                const output = document.createElement('div');
-                output.className = 'output';
-                output.innerHTML = `
-                    > <span class="neon-highlight">ROOT ACCESS</span> INITIATED<br>
-                    > <span class="warning">WARNING:</span> Security override detected<br>
-                    > <span class="neon-highlight">All</span> system locks released<br>
-                    > <span class="warning">ALERT:</span> Tracing signal origin<br>
-                    > Emergency protocols <span class="neon-highlight">engaged</span><br>
-                `;
-                document.querySelector('.terminal-body').insertBefore(output, prompt);
-            });
-        });
-    </script>
+  <div class="terminal">
+    <p>Initializing...</p>
+    <p>Connecting to node 13.76.221.45 ...</p>
+    <p>Access Level: <span style="color:red;">Restricted</span></p>
+    <p>Intrusion Detected.</p>
+    <p>Tracing Source...</p>
+    <p>UNKNOWN ENTITY: "HIM"</p>
+    <p>SYSTEM WARNING: Watching activity logs...</p>
+    <p>/// Session Terminated ///</p>
+  </div>
 </body>
 </html>
