@@ -104,6 +104,46 @@
       color: #ff0000;
       font-weight: bold;
     }
+
+    /* Secret Message Styles */
+    .secret-message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #000000;
+      border: 2px solid #ff0000;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(255,0,0,0.5);
+      z-index: 1000;
+      max-width: 600px;
+      width: 80%;
+      display: none;
+      animation: message-glow 2s infinite;
+    }
+
+    .message-title {
+      color: #ff0000;
+      font-size: 2.5em;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #ff0000;
+    }
+
+    .message-sub {
+      color: #ff4444;
+      font-size: 1.2em;
+      line-height: 1.5;
+      font-style: italic;
+    }
+
+    @keyframes message-glow {
+      0% { box-shadow: 0 0 10px rgba(255,0,0,0.3); }
+      50% { box-shadow: 0 0 30px rgba(255,0,0,0.7); }
+      100% { box-shadow: 0 0 10px rgba(255,0,0,0.3); }
+    }
   </style>
 </head>
 <body>
@@ -115,9 +155,20 @@
     <input type="text" id="name-input">
   </div>
 
+  <!-- Secret Message Container -->
+  <div class="secret-message">
+    <div class="message-title">CONGRATULATIONS YOU ACHIEVED NOTHING?</div>
+    <div class="message-sub">
+      Not yet pal.. not yet, I haven't completed the "HIM" lore yet<br>
+      Maybe try it in the final release or in the beta<br>
+      I know who you are 52 ;)
+    </div>
+  </div>
+
   <script>
     const nameInput = document.getElementById('name-input');
     const inputPrompt = document.querySelector('.input-prompt');
+    const secretMessage = document.querySelector('.secret-message');
     
     // Auto-focus on input
     nameInput.focus();
@@ -133,22 +184,30 @@
       if (e.key === 'Enter') {
         const userName = nameInput.value.trim();
         if (userName) {
-          // Hide input and show processing
           nameInput.style.display = 'none';
-          inputPrompt.innerHTML = `
-            <div class="processing-container">
-              <span style="color: #ff0000">Processing</span>
-              <span class="spinner"></span>
-            </div>
-          `;
-
-          // Start spinner animation
-          let frame = 0;
-          const spinnerEl = inputPrompt.querySelector('.spinner');
-          spinnerInterval = setInterval(() => {
-            spinnerEl.textContent = spinnerFrames[frame];
-            frame = (frame + 1) % spinnerFrames.length;
-          }, 100);
+          
+          if (userName.toUpperCase() === "HIM") {
+            // Clear any existing spinner
+            clearInterval(spinnerInterval);
+            // Show secret message
+            secretMessage.style.display = 'block';
+          } else {
+            // Normal processing flow
+            inputPrompt.innerHTML = `
+              <div class="processing-container">
+                <span style="color: #ff0000">Processing</span>
+                <span class="spinner"></span>
+              </div>
+            `;
+            
+            // Start spinner animation
+            let frame = 0;
+            const spinnerEl = inputPrompt.querySelector('.spinner');
+            spinnerInterval = setInterval(() => {
+              spinnerEl.textContent = spinnerFrames[frame];
+              frame = (frame + 1) % spinnerFrames.length;
+            }, 100);
+          }
         }
       }
     });
