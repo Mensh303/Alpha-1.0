@@ -93,18 +93,6 @@
       100% { border-bottom-color: transparent; }
     }
 
-    .processing-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .spinner {
-      color: #ff0000;
-      font-weight: bold;
-    }
-
     /* Secret Message Styles */
     .secret-message {
       position: fixed;
@@ -115,6 +103,24 @@
       border: 2px solid #ff0000;
       padding: 30px;
       text-align: center;
+      box-shadow: 0 0 20px rgba(255,0,0,0.5);
+      z-index: 1000;
+      max-width: 600px;
+      width: 80%;
+      display: none;
+      animation: message-glow 2s infinite;
+    }
+
+    /* Info Box Styles */
+    .info-box {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #000000;
+      border: 2px solid #ff0000;
+      padding: 30px;
+      text-align: left;
       box-shadow: 0 0 20px rgba(255,0,0,0.5);
       z-index: 1000;
       max-width: 600px;
@@ -139,6 +145,26 @@
       font-style: italic;
     }
 
+    .info-title {
+      color: #ff0000;
+      font-size: 2em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ff0000;
+      padding-bottom: 10px;
+    }
+
+    .info-line {
+      color: #ff4444;
+      margin: 15px 0;
+      font-size: 1.1em;
+    }
+
+    .info-value {
+      color: #ffffff;
+      margin-left: 10px;
+    }
+
     @keyframes message-glow {
       0% { box-shadow: 0 0 10px rgba(255,0,0,0.3); }
       50% { box-shadow: 0 0 30px rgba(255,0,0,0.7); }
@@ -155,7 +181,15 @@
     <input type="text" id="name-input">
   </div>
 
-  <!-- Secret Message Container -->
+  <!-- Info Box -->
+  <div class="info-box">
+    <div class="info-title">ACCESS PROFILE</div>
+    <div class="info-line">NAME: <span class="info-value" id="user-name"></span></div>
+    <div class="info-line">ID: <span class="info-value" id="user-id"></span></div>
+    <div class="info-line">STATUS: <span class="info-value">UNKNOWN</span></div>
+  </div>
+
+  <!-- Secret Message -->
   <div class="secret-message">
     <div class="message-title">CONGRATULATIONS YOU ACHIEVED NOTHING?</div>
     <div class="message-sub">
@@ -169,6 +203,7 @@
     const nameInput = document.getElementById('name-input');
     const inputPrompt = document.querySelector('.input-prompt');
     const secretMessage = document.querySelector('.secret-message');
+    const infoBox = document.querySelector('.info-box');
     
     // Auto-focus on input
     nameInput.focus();
@@ -180,6 +215,11 @@
     const spinnerFrames = ['\\', '/', '-', '|'];
     let spinnerInterval;
 
+    // Generate 11-digit ID
+    function generateRandomID() {
+      return Math.floor(Math.random() * 90000000000 + 10000000000).toString();
+    }
+
     nameInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         const userName = nameInput.value.trim();
@@ -187,26 +227,14 @@
           nameInput.style.display = 'none';
           
           if (userName.toUpperCase() === "HIM") {
-            // Clear any existing spinner
+            // Secret message flow
             clearInterval(spinnerInterval);
-            // Show secret message
             secretMessage.style.display = 'block';
           } else {
-            // Normal processing flow
-            inputPrompt.innerHTML = `
-              <div class="processing-container">
-                <span style="color: #ff0000">Processing</span>
-                <span class="spinner"></span>
-              </div>
-            `;
-            
-            // Start spinner animation
-            let frame = 0;
-            const spinnerEl = inputPrompt.querySelector('.spinner');
-            spinnerInterval = setInterval(() => {
-              spinnerEl.textContent = spinnerFrames[frame];
-              frame = (frame + 1) % spinnerFrames.length;
-            }, 100);
+            // Normal user flow
+            document.getElementById('user-name').textContent = userName;
+            document.getElementById('user-id').textContent = generateRandomID();
+            infoBox.style.display = 'block';
           }
         }
       }
