@@ -207,10 +207,33 @@
       line-height: 1.4;
     }
 
+    .dev-path {
+      font-size: 5em;
+      letter-spacing: -20px;
+      color: #ff0000;
+      text-align: center;
+      width: 100%;
+      margin: 20px 0;
+    }
+
+    .access-denied {
+      color: #ff0000;
+      text-transform: uppercase;
+      font-size: 1.2em;
+      margin-top: 20px;
+      animation: pulse 0.5s infinite;
+    }
+
     @keyframes message-glow {
       0% { box-shadow: 0 0 10px rgba(255,0,0,0.3); }
       50% { box-shadow: 0 0 30px rgba(255,0,0,0.7); }
       100% { box-shadow: 0 0 10px rgba(255,0,0,0.3); }
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.3; }
+      100% { opacity: 1; }
     }
   </style>
 </head>
@@ -236,7 +259,7 @@
       I CAN BE EVERYWHERE AND AT THE SAME TIME NOT THERE,<br>
       IF YOU HAPPEN AND SEE ME, SAYING THE TRUTH WILL MAKE ME VANISH.
     </div>
-    <input type="text" id="riddle-input" placeholder=">_">
+    <input type="text" id="riddle-input">
   </div>
 
   <div class="secret-message" id="secret-message">
@@ -257,6 +280,10 @@
     </div>
   </div>
 
+  <div class="access-denied" id="access-denied" style="display: none;">
+    ACCESS DENIED
+  </div>
+
   <script>
     const nameInput = document.getElementById('name-input');
     const inputPrompt = document.querySelector('.input-prompt');
@@ -265,6 +292,7 @@
     const riddleContainer = document.getElementById('riddle-container');
     const riddleInput = document.getElementById('riddle-input');
     const successMessage = document.getElementById('success-message');
+    const accessDenied = document.getElementById('access-denied');
     
     nameInput.focus();
     nameInput.placeholder = '';
@@ -322,13 +350,29 @@
     riddleInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         const answer = riddleInput.value.trim();
+        const riddleText = document.querySelector('.riddle-text');
+        
+        // Clear previous messages
+        accessDenied.style.display = 'none';
+        riddleText.innerHTML = document.querySelector('.riddle-text').originalHTML;
+
         if (answer === "GHOST") {
           riddleContainer.style.display = 'none';
           successMessage.style.display = 'block';
+        } else if (answer === "667") {
+          // Developer path
+          riddleText.innerHTML = '<div class="dev-path">__</div>';
+        } else {
+          // Show access denied
+          accessDenied.style.display = 'block';
         }
         riddleInput.value = '';
       }
     });
+
+    // Store original riddle text
+    document.querySelector('.riddle-text').originalHTML = 
+      document.querySelector('.riddle-text').innerHTML;
   </script>
 </body>
 </html>
