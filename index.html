@@ -50,13 +50,13 @@
       margin: 20px 0;
     }
 
-    #name-input {
+    #name-input, #riddle-input {
       background: transparent;
       border: none;
       border-bottom: 2px solid #ff0000;
       color: #ff0000;
       font-family: 'Share Tech Mono', monospace;
-      font-size: 1.2em;
+      font-size: 1.1em;
       text-align: center;
       width: 300px;
       padding: 5px;
@@ -64,7 +64,7 @@
       animation: blink 1s infinite;
     }
 
-    #name-input:focus {
+    #name-input:focus, #riddle-input:focus {
       outline: none;
     }
 
@@ -136,7 +136,27 @@
       max-width: 600px;
       width: 80%;
       display: none;
-      animation: message-glow 2s infinite;
+    }
+
+    .riddle-box {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #000000;
+      border: 2px solid #ff0000;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(255,0,0,0.5);
+      z-index: 1001;
+      max-width: 600px;
+      width: 80%;
+      display: none;
+    }
+
+    .success-message {
+      border-color: #00ff00;
+      box-shadow: 0 0 20px rgba(0,255,0,0.5);
     }
 
     .message-title {
@@ -146,6 +166,11 @@
       letter-spacing: 3px;
       margin-bottom: 20px;
       text-shadow: 0 0 10px #ff0000;
+    }
+
+    .success-message .message-title {
+      color: #00ff00;
+      text-shadow: 0 0 10px #00ff00;
     }
 
     .message-sub {
@@ -175,6 +200,13 @@
       margin-left: 10px;
     }
 
+    .riddle-text {
+      color: #ff4444;
+      margin: 20px 0;
+      font-size: 1.1em;
+      line-height: 1.4;
+    }
+
     @keyframes message-glow {
       0% { box-shadow: 0 0 10px rgba(255,0,0,0.3); }
       50% { box-shadow: 0 0 30px rgba(255,0,0,0.7); }
@@ -198,7 +230,16 @@
     <div class="info-line">STATUS: <span class="info-value">UNKNOWN</span></div>
   </div>
 
-  <div class="secret-message">
+  <div class="riddle-box" id="riddle-container">
+    <div class="riddle-text">
+      I DO NOT KNOW IF I EXIST OR NOT,<br>
+      I CAN BE EVERYWHERE AND AT THE SAME TIME NOT THERE,<br>
+      IF YOU HAPPEN AND SEE ME, SAYING THE TRUTH WILL MAKE ME VANISH.
+    </div>
+    <input type="text" id="riddle-input" placeholder=">_">
+  </div>
+
+  <div class="secret-message" id="secret-message">
     <div class="message-title">CONGRATULATIONS YOU ACHIEVED NOTHING?</div>
     <div class="message-sub">
       Not yet pal.. not yet, I haven't completed the "HIM" lore yet<br>
@@ -207,11 +248,23 @@
     </div>
   </div>
 
+  <div class="secret-message success-message" id="success-message" style="display: none;">
+    <div class="message-title">WELL DONE BROTHER</div>
+    <div class="message-sub">
+      You completed ALPHA_1.2<br>
+      This was just a test so don't be disappointed<br>
+      Things are yet to come :>
+    </div>
+  </div>
+
   <script>
     const nameInput = document.getElementById('name-input');
     const inputPrompt = document.querySelector('.input-prompt');
-    const secretMessage = document.querySelector('.secret-message');
+    const secretMessage = document.getElementById('secret-message');
     const infoBox = document.querySelector('.info-box');
+    const riddleContainer = document.getElementById('riddle-container');
+    const riddleInput = document.getElementById('riddle-input');
+    const successMessage = document.getElementById('success-message');
     
     nameInput.focus();
     nameInput.placeholder = '';
@@ -223,18 +276,17 @@
       return Math.floor(Math.random() * 90000000000 + 10000000000).toString();
     }
 
+    // Name input handler
     nameInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         const userName = nameInput.value.trim();
         if (userName) {
           nameInput.style.display = 'none';
           
-          // Case-sensitive check for "HIM"
           if (userName === "HIM") {
             clearInterval(spinnerInterval);
             secretMessage.style.display = 'block';
           } else {
-            // Show processing animation
             inputPrompt.innerHTML = `
               <div class="processing-container">
                 <span style="color: #ff0000">Processing</span>
@@ -242,7 +294,6 @@
               </div>
             `;
 
-            // Start spinner
             let frame = 0;
             const spinnerEl = inputPrompt.querySelector('.spinner');
             spinnerInterval = setInterval(() => {
@@ -250,15 +301,32 @@
               frame = (frame + 1) % spinnerFrames.length;
             }, 100);
 
-            // Show access profile after 5 seconds
             setTimeout(() => {
               clearInterval(spinnerInterval);
               document.getElementById('user-name').textContent = userName;
               document.getElementById('user-id').textContent = generateRandomID();
               infoBox.style.display = 'block';
+              
+              setTimeout(() => {
+                infoBox.style.display = 'none';
+                riddleContainer.style.display = 'block';
+                riddleInput.focus();
+              }, 2000);
             }, 5000);
           }
         }
+      }
+    });
+
+    // Riddle input handler
+    riddleInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        const answer = riddleInput.value.trim();
+        if (answer === "GHOST") {
+          riddleContainer.style.display = 'none';
+          successMessage.style.display = 'block';
+        }
+        riddleInput.value = '';
       }
     });
   </script>
