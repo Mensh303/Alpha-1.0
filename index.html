@@ -9,53 +9,29 @@
 
     body {
       margin: 0;
-      background-color: #121212;
-      color: #d1d1d1;
+      background-color: #010101;
+      color: #e0e0e0;
       font-family: 'Share Tech Mono', monospace;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
       overflow: hidden;
       position: relative;
-      background-image: url('https://images.unsplash.com/photo-1533742459028-858b68200ee5'); /* Sci-fi lab feel */
-      background-size: cover;
-      background-position: center;
-      filter: blur(2px);
-    }
-
-    .overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 1;
     }
 
     .terminal {
-      position: relative;
-      background-color: rgba(0, 0, 0, 0.8);
-      border: 2px solid #ff4d4d;
+      background: rgba(255, 255, 255, 0.03);
       padding: 30px;
-      font-size: 1.3em;
-      color: #ff4d4d;
-      max-width: 600px;
+      border: 1px solid #e0e0e0;
       width: 80%;
-      box-shadow: 0 0 15px rgba(255, 77, 77, 0.3);
-      z-index: 2;
+      max-width: 600px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
       text-align: left;
+      font-size: 1.2em;
       overflow-y: auto;
-      max-height: 70vh;
-      border-radius: 10px;
-      animation: flickerEffect 1.5s infinite;
-    }
-
-    @keyframes flickerEffect {
-      0% { opacity: 0.9; transform: translateY(1px); }
-      50% { opacity: 0.6; transform: translateY(-1px); }
-      100% { opacity: 0.9; transform: translateY(1px); }
+      max-height: 80vh;
     }
 
     .terminal p {
@@ -65,21 +41,22 @@
 
     .alert {
       position: absolute;
-      top: 10%;
+      top: 5%;
       right: 5%;
-      color: #ff4d4d;
-      font-size: 1.5em;
-      letter-spacing: 2px;
+      background: #111;
+      color: white;
+      padding: 10px 20px;
+      border: 1px solid white;
+      font-size: 0.9em;
+      animation: pulse 1.5s infinite;
       text-transform: uppercase;
-      animation: flickerAlert 1s infinite;
-      z-index: 3;
-      text-shadow: 0 0 10px #ff4d4d;
+      letter-spacing: 2px;
     }
 
-    @keyframes flickerAlert {
-      0% { opacity: 1; }
-      50% { opacity: 0.4; }
-      100% { opacity: 1; }
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.05); }
+      100% { opacity: 1; transform: scale(1); }
     }
 
     .static {
@@ -90,49 +67,26 @@
       height: 100%;
       background: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif') repeat;
       mix-blend-mode: screen;
-      opacity: 0.1;
-      z-index: 0;
+      opacity: 0.05;
       pointer-events: none;
+      z-index: 0;
     }
-
-    .rusted-border {
-      border: 2px solid #3e3e3e;
-      border-radius: 10px;
-      box-shadow: 0 0 15px #000, inset 0 0 5px #ff4d4d;
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: -1;
-      animation: rustEffect 3s infinite alternate;
-    }
-
-    @keyframes rustEffect {
-      0% { border-color: #ff4d4d; box-shadow: 0 0 15px rgba(255, 77, 77, 0.5); }
-      100% { border-color: #3e3e3e; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); }
-    }
-
   </style>
 </head>
 <body>
-  <div class="overlay"></div>
-  <div class="rusted-border"></div>
   <div class="static"></div>
   
-  <div class="alert">SYSTEM BREACH</div>
+  <div class="alert">SECURITY BREACH</div>
 
   <div class="terminal">
-    <p>ERROR: Corrupted Data...</p>
-    <p>WARNING: Unauthorized Access Detected...</p>
+    <p>Initializing...</p>
+    <p>Connecting to node 13.76.221.45 ...</p>
+    <p>Access Level: <span style="color:red;">Restricted</span></p>
+    <p>Intrusion Detected.</p>
     <p>Tracing Source...</p>
-    <p>LOCATION: <span style="color: #ff4d4d;">/unknown/level12</span></p>
-    <p>Connection Lost. Re-attempting...</p>
-    <p>WARNING: System instability detected...</p>
-    <p>ALERT: Data breach confirmed.</p>
-    <p>Security Log: <span style="color: #ff4d4d;">UNKNOWN ENTITY: "PROJECT X"</span></p>
-    <p>Shutdown initiated. <span style="color: #ff4d4d;">SYSTEM FAILING...</span></p>
-    <p>/// SYSTEM DAMAGE REPORT ///</p>
+    <p>UNKNOWN ENTITY: "HIM"</p>
+    <p>SYSTEM WARNING: Watching activity logs...</p>
+    <p>/// Session Terminated ///</p>
   </div>
 </body>
 </html>
