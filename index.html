@@ -207,21 +207,27 @@
       line-height: 1.4;
     }
 
-    .dev-path {
-      font-size: 5em;
-      letter-spacing: -20px;
-      color: #ff0000;
-      text-align: center;
-      width: 100%;
-      margin: 20px 0;
-    }
-
     .access-denied {
       color: #ff0000;
       text-transform: uppercase;
       font-size: 1.2em;
       margin-top: 20px;
       animation: pulse 0.5s infinite;
+      display: none;
+      position: absolute;
+      bottom: -40px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .dev-message {
+      color: #ff0000;
+      font-size: 1.5em;
+      text-align: center;
+      padding: 20px;
+      border: 1px solid #ff0000;
+      margin: 20px 0;
+      text-shadow: 0 0 10px rgba(255,0,0,0.5);
     }
 
     @keyframes message-glow {
@@ -260,6 +266,7 @@
       IF YOU HAPPEN AND SEE ME, SAYING THE TRUTH WILL MAKE ME VANISH.
     </div>
     <input type="text" id="riddle-input">
+    <div class="access-denied" id="access-denied">ACCESS DENIED</div>
   </div>
 
   <div class="secret-message" id="secret-message">
@@ -278,10 +285,6 @@
       This was just a test so don't be disappointed<br>
       Things are yet to come :>
     </div>
-  </div>
-
-  <div class="access-denied" id="access-denied" style="display: none;">
-    ACCESS DENIED
   </div>
 
   <script>
@@ -352,16 +355,17 @@
         const answer = riddleInput.value.trim();
         const riddleText = document.querySelector('.riddle-text');
         
-        // Clear previous messages
+        // Reset states
         accessDenied.style.display = 'none';
+        successMessage.style.display = 'none';
         riddleText.innerHTML = document.querySelector('.riddle-text').originalHTML;
 
         if (answer === "GHOST") {
           riddleContainer.style.display = 'none';
           successMessage.style.display = 'block';
         } else if (answer === "667") {
-          // Developer path
-          riddleText.innerHTML = '<div class="dev-path">__</div>';
+          // Developer path message
+          riddleText.innerHTML = '<div class="dev-message">YOU HAVE NO IDEA WHAT YOU HAVE DONE</div>';
         } else {
           // Show access denied
           accessDenied.style.display = 'block';
