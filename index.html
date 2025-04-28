@@ -230,6 +230,13 @@
       text-shadow: 0 0 10px rgba(255,0,0,0.5);
     }
 
+    .dumb-message {
+      color: #ff0000;
+      font-size: 2em;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px #ff0000;
+    }
+
     @keyframes message-glow {
       0% { box-shadow: 0 0 10px rgba(255,0,0,0.3); }
       50% { box-shadow: 0 0 30px rgba(255,0,0,0.7); }
@@ -287,7 +294,26 @@
     </div>
   </div>
 
+  <div class="secret-message" id="dumb-message" style="display: none;">
+    <div class="dumb-message">ARE YOU DUMB?</div>
+  </div>
+
   <script>
+    // Block inspect element (limited effectiveness)
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+    });
+
+    document.onkeydown = function(e) {
+      if (e.keyCode == 123 || // F12
+          (e.ctrlKey && e.shiftKey && e.keyCode == 73) || // Ctrl+Shift+I
+          (e.ctrlKey && e.shiftKey && e.keyCode == 74) || // Ctrl+Shift+J
+          (e.ctrlKey && e.keyCode == 85) // Ctrl+U
+      ) {
+        return false;
+      }
+    };
+
     const nameInput = document.getElementById('name-input');
     const inputPrompt = document.querySelector('.input-prompt');
     const secretMessage = document.getElementById('secret-message');
@@ -296,6 +322,7 @@
     const riddleInput = document.getElementById('riddle-input');
     const successMessage = document.getElementById('success-message');
     const accessDenied = document.getElementById('access-denied');
+    const dumbMessage = document.getElementById('dumb-message');
     
     nameInput.focus();
     nameInput.placeholder = '';
@@ -307,7 +334,6 @@
       return Math.floor(Math.random() * 90000000000 + 10000000000).toString();
     }
 
-    // Name input handler
     nameInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         const userName = nameInput.value.trim();
@@ -349,32 +375,30 @@
       }
     });
 
-    // Riddle input handler
     riddleInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         const answer = riddleInput.value.trim();
         const riddleText = document.querySelector('.riddle-text');
         
-        // Reset states
         accessDenied.style.display = 'none';
         successMessage.style.display = 'none';
+        dumbMessage.style.display = 'none';
         riddleText.innerHTML = document.querySelector('.riddle-text').originalHTML;
 
         if (answer === "GHOST") {
           riddleContainer.style.display = 'none';
           successMessage.style.display = 'block';
         } else if (answer === "667") {
-          // Developer path message
           riddleText.innerHTML = '<div class="dev-message">YOU HAVE NO IDEA WHAT YOU HAVE DONE</div>';
+        } else if (answer === "HIM") {
+          dumbMessage.style.display = 'block';
         } else {
-          // Show access denied
           accessDenied.style.display = 'block';
         }
         riddleInput.value = '';
       }
     });
 
-    // Store original riddle text
     document.querySelector('.riddle-text').originalHTML = 
       document.querySelector('.riddle-text').innerHTML;
   </script>
