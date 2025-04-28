@@ -93,7 +93,18 @@
       100% { border-bottom-color: transparent; }
     }
 
-    /* Secret Message Styles */
+    .processing-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .spinner {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
     .secret-message {
       position: fixed;
       top: 50%;
@@ -111,7 +122,6 @@
       animation: message-glow 2s infinite;
     }
 
-    /* Info Box Styles */
     .info-box {
       position: fixed;
       top: 50%;
@@ -181,7 +191,6 @@
     <input type="text" id="name-input">
   </div>
 
-  <!-- Info Box -->
   <div class="info-box">
     <div class="info-title">ACCESS PROFILE</div>
     <div class="info-line">NAME: <span class="info-value" id="user-name"></span></div>
@@ -189,7 +198,6 @@
     <div class="info-line">STATUS: <span class="info-value">UNKNOWN</span></div>
   </div>
 
-  <!-- Secret Message -->
   <div class="secret-message">
     <div class="message-title">CONGRATULATIONS YOU ACHIEVED NOTHING?</div>
     <div class="message-sub">
@@ -205,17 +213,12 @@
     const secretMessage = document.querySelector('.secret-message');
     const infoBox = document.querySelector('.info-box');
     
-    // Auto-focus on input
     nameInput.focus();
-    
-    // Remove placeholder completely
     nameInput.placeholder = '';
 
-    // Spinner animation frames
     const spinnerFrames = ['\\', '/', '-', '|'];
     let spinnerInterval;
 
-    // Generate 11-digit ID
     function generateRandomID() {
       return Math.floor(Math.random() * 90000000000 + 10000000000).toString();
     }
@@ -226,15 +229,34 @@
         if (userName) {
           nameInput.style.display = 'none';
           
-          if (userName.toUpperCase() === "HIM") {
-            // Secret message flow
+          // Case-sensitive check for "HIM"
+          if (userName === "HIM") {
             clearInterval(spinnerInterval);
             secretMessage.style.display = 'block';
           } else {
-            // Normal user flow
-            document.getElementById('user-name').textContent = userName;
-            document.getElementById('user-id').textContent = generateRandomID();
-            infoBox.style.display = 'block';
+            // Show processing animation
+            inputPrompt.innerHTML = `
+              <div class="processing-container">
+                <span style="color: #ff0000">Processing</span>
+                <span class="spinner"></span>
+              </div>
+            `;
+
+            // Start spinner
+            let frame = 0;
+            const spinnerEl = inputPrompt.querySelector('.spinner');
+            spinnerInterval = setInterval(() => {
+              spinnerEl.textContent = spinnerFrames[frame];
+              frame = (frame + 1) % spinnerFrames.length;
+            }, 100);
+
+            // Show access profile after 5 seconds
+            setTimeout(() => {
+              clearInterval(spinnerInterval);
+              document.getElementById('user-name').textContent = userName;
+              document.getElementById('user-id').textContent = generateRandomID();
+              infoBox.style.display = 'block';
+            }, 5000);
           }
         }
       }
