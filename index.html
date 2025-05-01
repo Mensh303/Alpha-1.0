@@ -1,402 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HIM</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Loading...</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
     body {
       margin: 0;
-      background-color: #010101;
-      color: #e0e0e0;
+      background-color: black;
+      color: white;
       font-family: 'Share Tech Mono', monospace;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
       overflow: hidden;
+    }
+
+    .glitch {
+      font-size: 2.5rem;
+      color: #ffffff;
       position: relative;
+      animation: flicker 1.5s infinite;
     }
 
-    .terminal {
-      background: rgba(255, 255, 255, 0.03);
-      padding: 30px;
-      border: 1px solid #e0e0e0;
-      width: 80%;
-      max-width: 600px;
-      box-shadow: 0 0 10px rgba(255,255,255,0.1);
-      text-align: center;
-      font-size: 1.2em;
-      overflow-y: auto;
-      max-height: 80vh;
-    }
-
-    .version-glitch {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      color: #00ff00;
-      animation: glitch 1s infinite;
-      opacity: 0.8;
-      font-size: 0.9em;
-    }
-
-    .input-prompt {
-      color: #ff0000;
-      font-size: 1.5em;
-      margin: 20px 0;
-    }
-
-    #name-input, #riddle-input {
-      background: transparent;
-      border: none;
-      border-bottom: 2px solid #ff0000;
-      color: #ff0000;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 1.1em;
-      text-align: center;
-      width: 300px;
-      padding: 5px;
-      caret-color: #ff0000;
-      animation: blink 1s infinite;
-    }
-
-    #name-input:focus, #riddle-input:focus {
-      outline: none;
-    }
-
-    .static {
+    .glitch::before,
+    .glitch::after {
+      content: "Loading...";
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
+    }
+
+    .glitch::before {
+      color: #ff3c3c;
+      z-index: -1;
+      animation: glitchTop 2s infinite linear;
+    }
+
+    .glitch::after {
+      color: #00fff2;
+      z-index: -1;
+      animation: glitchBottom 2s infinite linear;
+    }
+
+    @keyframes glitchTop {
+      0% { clip-path: inset(0 0 90% 0); transform: translate(-2px, -2px); }
+      50% { clip-path: inset(10% 0 70% 0); transform: translate(2px, -1px); }
+      100% { clip-path: inset(0 0 90% 0); transform: none; }
+    }
+
+    @keyframes glitchBottom {
+      0% { clip-path: inset(90% 0 0 0); transform: translate(2px, 2px); }
+      50% { clip-path: inset(60% 0 20% 0); transform: translate(-3px, 1px); }
+      100% { clip-path: inset(90% 0 0 0); transform: none; }
+    }
+
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+      20%, 22%, 24%, 55% { opacity: 0.4; }
+    }
+
+    .static {
+      position: absolute;
+      width: 100%;
       height: 100%;
       background: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif') repeat;
       mix-blend-mode: screen;
-      opacity: 0.05;
+      opacity: 0.06;
       pointer-events: none;
-      z-index: 0;
-    }
-
-    @keyframes glitch {
-      0% { transform: translateX(0); text-shadow: 0 0 #ff00ff, 0 0 #00ffff; }
-      50% { transform: translateX(-2px); text-shadow: -2px 0 #ff00ff, 2px 0 #00ffff; }
-      100% { transform: translateX(0); text-shadow: 0 0 #ff00ff, 0 0 #00ffff; }
-    }
-
-    @keyframes blink {
-      0% { border-bottom-color: transparent; }
-      50% { border-bottom-color: #ff0000; }
-      100% { border-bottom-color: transparent; }
-    }
-
-    .processing-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .spinner {
-      color: #ff0000;
-      font-weight: bold;
-    }
-
-    .secret-message {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #000000;
-      border: 2px solid #ff0000;
-      padding: 30px;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(255,0,0,0.5);
-      z-index: 1000;
-      max-width: 600px;
-      width: 80%;
-      display: none;
-      animation: message-glow 2s infinite;
-    }
-
-    .info-box {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #000000;
-      border: 2px solid #ff0000;
-      padding: 30px;
-      text-align: left;
-      box-shadow: 0 0 20px rgba(255,0,0,0.5);
-      z-index: 1000;
-      max-width: 600px;
-      width: 80%;
-      display: none;
-    }
-
-    .riddle-box {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #000000;
-      border: 2px solid #ff0000;
-      padding: 30px;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(255,0,0,0.5);
-      z-index: 1001;
-      max-width: 600px;
-      width: 80%;
-      display: none;
-    }
-
-    .success-message {
-      border-color: #00ff00;
-      box-shadow: 0 0 20px rgba(0,255,0,0.5);
-    }
-
-    .message-title {
-      color: #ff0000;
-      font-size: 2.5em;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      margin-bottom: 20px;
-      text-shadow: 0 0 10px #ff0000;
-    }
-
-    .success-message .message-title {
-      color: #00ff00;
-      text-shadow: 0 0 10px #00ff00;
-    }
-
-    .message-sub {
-      color: #ff4444;
-      font-size: 1.2em;
-      line-height: 1.5;
-      font-style: italic;
-    }
-
-    .info-title {
-      color: #ff0000;
-      font-size: 2em;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-      border-bottom: 1px solid #ff0000;
-      padding-bottom: 10px;
-    }
-
-    .info-line {
-      color: #ff4444;
-      margin: 15px 0;
-      font-size: 1.1em;
-    }
-
-    .info-value {
-      color: #ffffff;
-      margin-left: 10px;
-    }
-
-    .riddle-text {
-      color: #ff4444;
-      margin: 20px 0;
-      font-size: 1.1em;
-      line-height: 1.4;
-    }
-
-    .access-denied {
-      color: #ff0000;
-      text-transform: uppercase;
-      font-size: 1.2em;
-      margin-top: 20px;
-      animation: pulse 0.5s infinite;
-      display: none;
-      position: absolute;
-      bottom: -40px;
-      width: 100%;
-      text-align: center;
-    }
-
-    .dev-message {
-      color: #ff0000;
-      font-size: 1.5em;
-      text-align: center;
-      padding: 20px;
-      border: 1px solid #ff0000;
-      margin: 20px 0;
-      text-shadow: 0 0 10px rgba(255,0,0,0.5);
-    }
-
-    .dumb-message {
-      color: #ff0000;
-      font-size: 2em;
-      text-transform: uppercase;
-      text-shadow: 0 0 10px #ff0000;
-    }
-
-    @keyframes message-glow {
-      0% { box-shadow: 0 0 10px rgba(255,0,0,0.3); }
-      50% { box-shadow: 0 0 30px rgba(255,0,0,0.7); }
-      100% { box-shadow: 0 0 10px rgba(255,0,0,0.3); }
-    }
-
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.3; }
-      100% { opacity: 1; }
     }
   </style>
 </head>
 <body>
   <div class="static"></div>
-  <div class="version-glitch">Alpha_build-1.2</div>
-
-  <div class="terminal">
-    <div class="input-prompt">ENTER YOUR NAME</div>
-    <input type="text" id="name-input">
-  </div>
-
-  <div class="info-box">
-    <div class="info-title">ACCESS PROFILE</div>
-    <div class="info-line">NAME: <span class="info-value" id="user-name"></span></div>
-    <div class="info-line">ID: <span class="info-value" id="user-id"></span></div>
-    <div class="info-line">STATUS: <span class="info-value">UNKNOWN</span></div>
-  </div>
-
-  <div class="riddle-box" id="riddle-container">
-    <div class="riddle-text">
-      I DO NOT KNOW IF I EXIST OR NOT,<br>
-      I CAN BE EVERYWHERE AND AT THE SAME TIME NOT THERE,<br>
-      IF YOU HAPPEN AND SEE ME, SAYING THE TRUTH WILL MAKE ME VANISH.
-    </div>
-    <input type="text" id="riddle-input">
-    <div class="access-denied" id="access-denied">ACCESS DENIED</div>
-  </div>
-
-  <div class="secret-message" id="secret-message">
-    <div class="message-title">CONGRATULATIONS YOU ACHIEVED NOTHING?</div>
-    <div class="message-sub">
-      Not yet pal.. not yet, I haven't completed the "HIM" lore yet<br>
-      Maybe try it in the final release or in the beta<br>
-      I know who you are 52 ;)
-    </div>
-  </div>
-
-  <div class="secret-message success-message" id="success-message" style="display: none;">
-    <div class="message-title">WELL DONE BROTHER</div>
-    <div class="message-sub">
-      You completed ALPHA_1.2<br>
-      This was just a test so don't be disappointed<br>
-      Things are yet to come :>
-    </div>
-  </div>
-
-  <div class="secret-message" id="dumb-message" style="display: none;">
-    <div class="dumb-message">Are you dumb?</div>
-  </div>
-
-  <script>
-    document.addEventListener('contextmenu', function(e) {
-      e.preventDefault();
-    });
-
-    document.onkeydown = function(e) {
-      if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73) || (e.ctrlKey && e.shiftKey && e.keyCode == 74) || (e.ctrlKey && e.keyCode == 85)) {
-        return false;
-      }
-    };
-
-    const nameInput = document.getElementById('name-input');
-    const inputPrompt = document.querySelector('.input-prompt');
-    const secretMessage = document.getElementById('secret-message');
-    const infoBox = document.querySelector('.info-box');
-    const riddleContainer = document.getElementById('riddle-container');
-    const riddleInput = document.getElementById('riddle-input');
-    const successMessage = document.getElementById('success-message');
-    const accessDenied = document.getElementById('access-denied');
-    const dumbMessage = document.getElementById('dumb-message');
-    
-    nameInput.focus();
-    nameInput.placeholder = '';
-
-    const spinnerFrames = ['\\', '/', '-', '|'];
-    let spinnerInterval;
-
-    function generateRandomID() {
-      return Math.floor(Math.random() * 90000000000 + 10000000000).toString();
-    }
-
-    nameInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        const userName = nameInput.value.trim();
-        if (userName) {
-          nameInput.style.display = 'none';
-          
-          if (userName === "HIM") {
-            clearInterval(spinnerInterval);
-            secretMessage.style.display = 'block';
-          } else {
-            inputPrompt.innerHTML = `
-              <div class="processing-container">
-                <span style="color: #ff0000">Processing</span>
-                <span class="spinner"></span>
-              </div>
-            `;
-
-            let frame = 0;
-            const spinnerEl = inputPrompt.querySelector('.spinner');
-            spinnerInterval = setInterval(() => {
-              spinnerEl.textContent = spinnerFrames[frame];
-              frame = (frame + 1) % spinnerFrames.length;
-            }, 100);
-
-            setTimeout(() => {
-              clearInterval(spinnerInterval);
-              document.getElementById('user-name').textContent = userName;
-              document.getElementById('user-id').textContent = generateRandomID();
-              infoBox.style.display = 'block';
-              
-              setTimeout(() => {
-                infoBox.style.display = 'none';
-                riddleContainer.style.display = 'block';
-                riddleInput.focus();
-              }, 2000);
-            }, 5000);
-          }
-        }
-      }
-    });
-
-    riddleInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        const answer = riddleInput.value.trim();
-        const riddleText = document.querySelector('.riddle-text');
-        
-        accessDenied.style.display = 'none';
-        successMessage.style.display = 'none';
-        dumbMessage.style.display = 'none';
-        riddleText.innerHTML = document.querySelector('.riddle-text').originalHTML;
-
-        if (answer === "GHOST") {
-          riddleContainer.style.display = 'none';
-          successMessage.style.display = 'block';
-        } else if (answer === "667") {
-          riddleText.innerHTML = '<div class="dev-message">YOU HAVE NO IDEA WHAT YOU HAVE DONE</div>';
-        } else if (answer === "HIM") {
-          riddleContainer.style.display = 'none';
-          dumbMessage.style.display = 'block';
-        } else {
-          accessDenied.style.display = 'block';
-        }
-        riddleInput.value = '';
-      }
-    });
-
-    document.querySelector('.riddle-text').originalHTML = 
-      document.querySelector('.riddle-text').innerHTML;
-  </script>
+  <div class="glitch">Loading...</div>
 </body>
 </html>
