@@ -1,178 +1,402 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypted Terminal Puzzle</title>
-    <style>
-        body {
-            background-color: #001011;
-            color: #c3fcf1;
-            font-family: 'Courier New', monospace;
-            margin: 0;
-            padding: 20px;
-            overflow: hidden;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HIM</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-        .terminal {
-            background-color: #001a1c;
-            border: 2px solid #0f535d;
-            border-radius: 3px;
-            width: 800px;
-            height: 500px;
-            margin: 50px auto;
-            box-shadow: 0 0 30px rgba(15, 83, 93, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
+    body {
+      margin: 0;
+      background-color: #010101;
+      color: #e0e0e0;
+      font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
 
-        .header {
-            background: #002229;
-            padding: 8px;
-            border-bottom: 1px solid #0f535d;
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-        }
+    .terminal {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 30px;
+      border: 1px solid #e0e0e0;
+      width: 80%;
+      max-width: 600px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+      text-align: center;
+      font-size: 1.2em;
+      overflow-y: auto;
+      max-height: 80vh;
+    }
 
-        .content {
-            padding: 20px;
-            height: calc(100% - 40px);
-            overflow-y: auto;
-            position: relative;
-        }
+    .version-glitch {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: #00ff00;
+      animation: glitch 1s infinite;
+      opacity: 0.8;
+      font-size: 0.9em;
+    }
 
-        .prompt {
-            color: #4af2e0;
-            margin: 15px 0;
-        }
+    .input-prompt {
+      color: #ff0000;
+      font-size: 1.5em;
+      margin: 20px 0;
+    }
 
-        .cursor {
-            display: inline-block;
-            width: 8px;
-            height: 15px;
-            background-color: #4af2e0;
-            animation: blink 1s infinite;
-        }
+    #name-input, #riddle-input {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid #ff0000;
+      color: #ff0000;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.1em;
+      text-align: center;
+      width: 300px;
+      padding: 5px;
+      caret-color: #ff0000;
+      animation: blink 1s infinite;
+    }
 
-        .hidden {
-            color: transparent;
-            cursor: pointer;
-            position: relative;
-        }
+    #name-input:focus, #riddle-input:focus {
+      outline: none;
+    }
 
-        .hidden:hover {
-            color: #4af2e0;
-            text-shadow: 0 0 10px #4af2e0;
-        }
+    .static {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif') repeat;
+      mix-blend-mode: screen;
+      opacity: 0.05;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-        .matrix {
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0.1;
-            z-index: -1;
-        }
+    @keyframes glitch {
+      0% { transform: translateX(0); text-shadow: 0 0 #ff00ff, 0 0 #00ffff; }
+      50% { transform: translateX(-2px); text-shadow: -2px 0 #ff00ff, 2px 0 #00ffff; }
+      100% { transform: translateX(0); text-shadow: 0 0 #ff00ff, 0 0 #00ffff; }
+    }
 
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
+    @keyframes blink {
+      0% { border-bottom-color: transparent; }
+      50% { border-bottom-color: #ff0000; }
+      100% { border-bottom-color: transparent; }
+    }
 
-        .glow {
-            animation: glow 2s infinite alternate;
-        }
+    .processing-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
 
-        @keyframes glow {
-            from { text-shadow: 0 0 5px #4af2e0; }
-            to { text-shadow: 0 0 20px #4af2e0; }
-        }
+    .spinner {
+      color: #ff0000;
+      font-weight: bold;
+    }
 
-        #response {
-            color: #ff5555;
-            display: none;
-            margin-top: 20px;
-        }
-    </style>
+    .secret-message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #000000;
+      border: 2px solid #ff0000;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(255,0,0,0.5);
+      z-index: 1000;
+      max-width: 600px;
+      width: 80%;
+      display: none;
+      animation: message-glow 2s infinite;
+    }
+
+    .info-box {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #000000;
+      border: 2px solid #ff0000;
+      padding: 30px;
+      text-align: left;
+      box-shadow: 0 0 20px rgba(255,0,0,0.5);
+      z-index: 1000;
+      max-width: 600px;
+      width: 80%;
+      display: none;
+    }
+
+    .riddle-box {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #000000;
+      border: 2px solid #ff0000;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(255,0,0,0.5);
+      z-index: 1001;
+      max-width: 600px;
+      width: 80%;
+      display: none;
+    }
+
+    .success-message {
+      border-color: #00ff00;
+      box-shadow: 0 0 20px rgba(0,255,0,0.5);
+    }
+
+    .message-title {
+      color: #ff0000;
+      font-size: 2.5em;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #ff0000;
+    }
+
+    .success-message .message-title {
+      color: #00ff00;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    .message-sub {
+      color: #ff4444;
+      font-size: 1.2em;
+      line-height: 1.5;
+      font-style: italic;
+    }
+
+    .info-title {
+      color: #ff0000;
+      font-size: 2em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ff0000;
+      padding-bottom: 10px;
+    }
+
+    .info-line {
+      color: #ff4444;
+      margin: 15px 0;
+      font-size: 1.1em;
+    }
+
+    .info-value {
+      color: #ffffff;
+      margin-left: 10px;
+    }
+
+    .riddle-text {
+      color: #ff4444;
+      margin: 20px 0;
+      font-size: 1.1em;
+      line-height: 1.4;
+    }
+
+    .access-denied {
+      color: #ff0000;
+      text-transform: uppercase;
+      font-size: 1.2em;
+      margin-top: 20px;
+      animation: pulse 0.5s infinite;
+      display: none;
+      position: absolute;
+      bottom: -40px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .dev-message {
+      color: #ff0000;
+      font-size: 1.5em;
+      text-align: center;
+      padding: 20px;
+      border: 1px solid #ff0000;
+      margin: 20px 0;
+      text-shadow: 0 0 10px rgba(255,0,0,0.5);
+    }
+
+    .dumb-message {
+      color: #ff0000;
+      font-size: 2em;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px #ff0000;
+    }
+
+    @keyframes message-glow {
+      0% { box-shadow: 0 0 10px rgba(255,0,0,0.3); }
+      50% { box-shadow: 0 0 30px rgba(255,0,0,0.7); }
+      100% { box-shadow: 0 0 10px rgba(255,0,0,0.3); }
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+  </style>
 </head>
 <body>
-    <div class="terminal">
-        <div class="header">
-            <span>CRYPTIC TERMINAL v1.3.7</span>
-            <span>CONNECTION: ENCRYPTED</span>
-        </div>
-        <div class="content" id="content">
-            <canvas class="matrix" id="matrix"></canvas>
-            <div class="prompt">> INITIALIZING SECURE CHANNEL...</div>
-            <div class="prompt">> LOADING PUZZLE MODULE...</div>
-            <div class="prompt glow">> FIND THE HIDDEN PATTERN</div>
-            
-            <div class="prompt">> SYSTEM FILES DETECTED:</div>
-            <div class="prompt">[1] encrypted_data.bin</div>
-            <div class="prompt">[2] security_logs.txt</div>
-            <div class="prompt">[3] <span class="hidden" onclick="revealCode()">■■■■■■■</span></div>
-            
-            <div class="prompt">> MEMORY ANALYSIS:</div>
-            <div class="prompt">48 65 78 20 63 6F 64 65 3A 20 32 34 38 35 31</div>
-            
-            <div class="prompt">> ENTER DECRYPTION KEY: 
-                <input type="text" id="input" style="background:none; border:none; color:#4af2e0; outline:none; width:200px;">
-                <span class="cursor"></span>
-            </div>
-            
-            <div id="response"></div>
-        </div>
+  <div class="static"></div>
+  <div class="version-glitch">Alpha_build-1.2</div>
+
+  <div class="terminal">
+    <div class="input-prompt">ENTER YOUR NAME</div>
+    <input type="text" id="name-input">
+  </div>
+
+  <div class="info-box">
+    <div class="info-title">ACCESS PROFILE</div>
+    <div class="info-line">NAME: <span class="info-value" id="user-name"></span></div>
+    <div class="info-line">ID: <span class="info-value" id="user-id"></span></div>
+    <div class="info-line">STATUS: <span class="info-value">UNKNOWN</span></div>
+  </div>
+
+  <div class="riddle-box" id="riddle-container">
+    <div class="riddle-text">
+      I DO NOT KNOW IF I EXIST OR NOT,<br>
+      I CAN BE EVERYWHERE AND AT THE SAME TIME NOT THERE,<br>
+      IF YOU HAPPEN AND SEE ME, SAYING THE TRUTH WILL MAKE ME VANISH.
     </div>
+    <input type="text" id="riddle-input">
+    <div class="access-denied" id="access-denied">ACCESS DENIED</div>
+  </div>
 
-    <script>
-        // Matrix background effect
-        const canvas = document.getElementById('matrix');
-        const ctx = canvas.getContext('2d');
-        canvas.width = 800;
-        canvas.height = 500;
+  <div class="secret-message" id="secret-message">
+    <div class="message-title">CONGRATULATIONS YOU ACHIEVED NOTHING?</div>
+    <div class="message-sub">
+      Not yet pal.. not yet, I haven't completed the "HIM" lore yet<br>
+      Maybe try it in the final release or in the beta<br>
+      I know who you are 52 ;)
+    </div>
+  </div>
 
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
-        const drops = Array(Math.floor(canvas.width/10)).fill(1);
+  <div class="secret-message success-message" id="success-message" style="display: none;">
+    <div class="message-title">WELL DONE BROTHER</div>
+    <div class="message-sub">
+      You completed ALPHA_1.2<br>
+      This was just a test so don't be disappointed<br>
+      Things are yet to come :>
+    </div>
+  </div>
 
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(0, 26, 28, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#0f535d';
+  <div class="secret-message" id="dumb-message" style="display: none;">
+    <div class="dumb-message">Are you dumb?</div>
+  </div>
 
-            drops.forEach((drop, i) => {
-                const char = chars[Math.floor(Math.random() * chars.length)];
-                ctx.fillText(char, i*10, drop*10);
-                drops[i] = (drop*10 > canvas.height*Math.random()) ? 0 : drop+1;
-            });
+  <script>
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+    });
+
+    document.onkeydown = function(e) {
+      if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73) || (e.ctrlKey && e.shiftKey && e.keyCode == 74) || (e.ctrlKey && e.keyCode == 85)) {
+        return false;
+      }
+    };
+
+    const nameInput = document.getElementById('name-input');
+    const inputPrompt = document.querySelector('.input-prompt');
+    const secretMessage = document.getElementById('secret-message');
+    const infoBox = document.querySelector('.info-box');
+    const riddleContainer = document.getElementById('riddle-container');
+    const riddleInput = document.getElementById('riddle-input');
+    const successMessage = document.getElementById('success-message');
+    const accessDenied = document.getElementById('access-denied');
+    const dumbMessage = document.getElementById('dumb-message');
+    
+    nameInput.focus();
+    nameInput.placeholder = '';
+
+    const spinnerFrames = ['\\', '/', '-', '|'];
+    let spinnerInterval;
+
+    function generateRandomID() {
+      return Math.floor(Math.random() * 90000000000 + 10000000000).toString();
+    }
+
+    nameInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        const userName = nameInput.value.trim();
+        if (userName) {
+          nameInput.style.display = 'none';
+          
+          if (userName === "HIM") {
+            clearInterval(spinnerInterval);
+            secretMessage.style.display = 'block';
+          } else {
+            inputPrompt.innerHTML = `
+              <div class="processing-container">
+                <span style="color: #ff0000">Processing</span>
+                <span class="spinner"></span>
+              </div>
+            `;
+
+            let frame = 0;
+            const spinnerEl = inputPrompt.querySelector('.spinner');
+            spinnerInterval = setInterval(() => {
+              spinnerEl.textContent = spinnerFrames[frame];
+              frame = (frame + 1) % spinnerFrames.length;
+            }, 100);
+
+            setTimeout(() => {
+              clearInterval(spinnerInterval);
+              document.getElementById('user-name').textContent = userName;
+              document.getElementById('user-id').textContent = generateRandomID();
+              infoBox.style.display = 'block';
+              
+              setTimeout(() => {
+                infoBox.style.display = 'none';
+                riddleContainer.style.display = 'block';
+                riddleInput.focus();
+              }, 2000);
+            }, 5000);
+          }
         }
-        setInterval(drawMatrix, 100);
+      }
+    });
 
-        // Puzzle logic
-        function revealCode() {
-            document.getElementById('response').innerHTML = 
-                "> PARTIAL DECRYPTION: The key is hidden in plain sight";
-            document.getElementById('response').style.display = 'block';
+    riddleInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        const answer = riddleInput.value.trim();
+        const riddleText = document.querySelector('.riddle-text');
+        
+        accessDenied.style.display = 'none';
+        successMessage.style.display = 'none';
+        dumbMessage.style.display = 'none';
+        riddleText.innerHTML = document.querySelector('.riddle-text').originalHTML;
+
+        if (answer === "GHOST") {
+          riddleContainer.style.display = 'none';
+          successMessage.style.display = 'block';
+        } else if (answer === "667") {
+          riddleText.innerHTML = '<div class="dev-message">YOU HAVE NO IDEA WHAT YOU HAVE DONE</div>';
+        } else if (answer === "HIM") {
+          riddleContainer.style.display = 'none';
+          dumbMessage.style.display = 'block';
+        } else {
+          accessDenied.style.display = 'block';
         }
+        riddleInput.value = '';
+      }
+    });
 
-        document.getElementById('input').addEventListener('keypress', function(e) {
-            if(e.key === 'Enter') {
-                const solution = 'AQUA';
-                const attempt = this.value.trim().toUpperCase();
-                
-                if(attempt === solution) {
-                    document.getElementById('response').innerHTML = 
-                        "> DECRYPTION SUCCESSFUL!<br>" +
-                        "> ACCESS GRANTED<br>" +
-                        "> SECRET MESSAGE: \"The answer was in the water\"";
-                    document.getElementById('response').style.color = '#4af2e0';
-                } else {
-                    document.getElementById('response').innerHTML = 
-                        "> DECRYPTION FAILED - TRY AGAIN";
-                    document.getElementById('response').style.color = '#ff5555';
-                }
-                this.value = '';
-                document.getElementById('response').style.display = 'block';
-            }
-        });
-    </script>
+    document.querySelector('.riddle-text').originalHTML = 
+      document.querySelector('.riddle-text').innerHTML;
+  </script>
 </body>
 </html>
